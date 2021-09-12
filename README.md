@@ -7,7 +7,7 @@ Small script for set a LAMP server on a Debian machine. This will install Apache
 
 `docker pull debian:10`
 
-### Second step, create you container
+### Second step, create your container
 [PROJECT NAME] => Name of you project
 [LOCAL FOLDER] => Path of your local folder shared with the container
 
