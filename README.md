@@ -3,6 +3,8 @@ Small script for set a LAMP server on a Debian machine. This will install Apache
 
 ## HOW TO USE
 
+This script is made for to be used with [Docker](https://www.docker.com/).
+
 ### First step, Download the src files from this repository
 Put these 3 files : "Dockerfile", "lamp-start.sh" and "virtualhost.py" into a folder.
 
