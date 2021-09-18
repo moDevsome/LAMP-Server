@@ -3,23 +3,26 @@ Small script for set a LAMP server on a Debian machine. This will install Apache
 
 ## HOW TO USE
 
-### First step, download a Debian 10 image from Docker Hub.
+### First step, Download the src files from this repository
+Put these 3 files : "Dockerfile", "lamp-start.sh" and "virtualhost.py" into a folder.
 
-`docker pull debian:10`
+[BUILD FOLDER] => The path of the folder where you put the 3 files
+
+Them, build the docker image
+`cd [BUILD FOLDER]`
+`docker build -t lamp.`
 
 ### Second step, create your container
 [PROJECT NAME] => Name of you project
 [LOCAL FOLDER] => Path of your local folder shared with the container
 
-`docker run -it --name [PROJECT NAME] -v [LOCAL FOLDER]:/var/www/html -p 80:80 debian:10`
+`docker run -it --name [PROJECT NAME] -v [LOCAL FOLDER]:/var/www/html -p 80:80 lamp:latest`
 
 ### Third step, execute the LAMP installation
-Once your container is started and you terminal is logged to the shell of the virtual machine, you can
-download the following files : "lamp.sh" and "virtualhost.py" from this repository, and paste these files at the root of your local folder.
+Once your container is started for the time, a setup script will be lauched.
 
-After that, execute `bash /var/www/html/lamp.sh`
-
-Let the process run... till you'll need to provide some anwser during the MySQL installation.
+Select the PHP version, provide the name of your website... and let the process run...
+till you'll need to provide some anwser during the MySQL installation.
 You can keep the default configuration, or edit the configuration by reading the instruction.
 
 ### Final step
@@ -40,5 +43,4 @@ Call [DOMAIN NAME].local in you favorite web browser... it should work !
 
 ### TO DO
 This script is not perfect... and there're still things to do !
-* find how to set an autostart for the services : Apache2 and MySQL
 * adding a process to set up an SSL layer and an SMTP service
