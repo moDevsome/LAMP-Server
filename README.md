@@ -12,7 +12,7 @@ Put these 3 files : "Dockerfile", "lamp-start.sh" and "virtualhost.py" into a fo
 
 Them, build the docker image
 `cd [BUILD FOLDER]`
-`docker build -t lamp.`
+`docker build -t lamp .`
 
 ### Second step, create your container
 [PROJECT NAME] => Name of you project
