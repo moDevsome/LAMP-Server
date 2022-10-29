@@ -31,6 +31,5 @@ RUN apt upgrade -y
 RUN apt update
 RUN apt full-upgrade -y
 RUN mkdir /etc/entrypoint
-COPY virtualhost.py /tmp/virtualhost.py
-COPY lamp-start.sh /etc/entrypoint/lamp-start.sh
-ENTRYPOINT bash /etc/entrypoint/lamp-start.sh
+COPY entrypoint.py /etc/entrypoint/entrypoint.py
+ENTRYPOINT python3 /etc/entrypoint/entrypoint.py
