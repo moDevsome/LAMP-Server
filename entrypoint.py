@@ -82,31 +82,37 @@ else:
             print("\033[0;31m ---ERROR --- \033[0m Download https://getcomposer.org/installer failed")
 
     # Install MySQL
-    os.system("wget https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb")
-    os.system("mv mysql-apt-config_0.8.13-1_all.deb tmp/mysql-apt-config_0.8.13-1_all.deb")
-    os.system("dpkg -i /tmp/mysql-apt-config_0.8.13-1_all.deb")
-    os.system("apt update -y")
-    os.system("apt upgrade -y")
-    os.system("apt install -y mariadb-server")
-    os.system("service mysql start")
+    if input("Do you want to install MySQL ? Press \"y\" key to install Mysql wich running with mariadb-server.\n") == "y":
+        os.system("wget https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb")
+        os.system("mv mysql-apt-config_0.8.13-1_all.deb tmp/mysql-apt-config_0.8.13-1_all.deb")
+        os.system("dpkg -i /tmp/mysql-apt-config_0.8.13-1_all.deb")
+        os.system("apt update -y")
+        os.system("apt upgrade -y")
+        os.system("apt install -y mariadb-server")
+        os.system("service mysql start")
 
-    # Setting MySQL default user
-    db_default_user = ""
-    while db_default_user.lower() == "root" or len(db_default_user) <= 0:
-        db_default_user = input(os.linesep +"Please define the name of the default db user (do not use ROOT) "+ os.linesep)
-    db_default_password = ""
-    while len(db_default_password) <= 0:
-        db_default_password = input(os.linesep +"Please define the password of the default db user"+ os.linesep)
+        # Setting MySQL default user
+        db_default_user = ""
+        while db_default_user.lower() == "root" or len(db_default_user) <= 0:
+            db_default_user = input(os.linesep +"Please define the name of the default db user (do not use ROOT) "+ os.linesep)
+        db_default_password = ""
+        while len(db_default_password) <= 0:
+            db_default_password = input(os.linesep +"Please define the password of the default db user"+ os.linesep)
 
-    os.system("mysql -e \"CREATE USER '"+ db_default_user +"'@'localhost' IDENTIFIED BY '"+ db_default_password +"'\"")
-    os.system("mysql -e \"GRANT ALL PRIVILEGES ON * . * TO '"+ db_default_user +"'@'localhost'\"")
+        os.system("mysql -e \"CREATE USER '"+ db_default_user +"'@'localhost' IDENTIFIED BY '"+ db_default_password +"'\"")
+        os.system("mysql -e \"GRANT ALL PRIVILEGES ON * . * TO '"+ db_default_user +"'@'localhost'\"")
 
-    # Download PHPMyAdmin
-    os.system("mkdir /var/www/phpmyadmin")
-    os.system("wget https://files.phpmyadmin.net/phpMyAdmin/5.1.1/phpMyAdmin-5.1.1-all-languages.tar.gz")
-    os.system("mv phpMyAdmin-5.1.1-all-languages.tar.gz /tmp/phpMyAdmin-5.1.1-all-languages.tar.gz")
-    os.system("cd tmp && tar xvf phpMyAdmin-5.1.1-all-languages.tar.gz")
-    os.system("mv /tmp/phpMyAdmin-5.1.1-all-languages/* /var/www/phpmyadmin")
+        # Download PHPMyAdmin
+        os.system("mkdir /var/www/phpmyadmin")
+        os.system("wget https://files.phpmyadmin.net/phpMyAdmin/5.1.1/phpMyAdmin-5.1.1-all-languages.tar.gz")
+        os.system("mv phpMyAdmin-5.1.1-all-languages.tar.gz /tmp/phpMyAdmin-5.1.1-all-languages.tar.gz")
+        os.system("cd tmp && tar xvf phpMyAdmin-5.1.1-all-languages.tar.gz")
+        os.system("mv /tmp/phpMyAdmin-5.1.1-all-languages/* /var/www/phpmyadmin")
+
+        # Clean up
+        os.system("rm /tmp/mysql-apt-config_0.8.13-1_all.deb")
+        os.system("rm /tmp/phpMyAdmin-5.1.1-all-languages.tar.gz")
+        os.system("rmdir /tmp/phpMyAdmin-5.1.1-all-languages")
 
     # Setting HTTP Conf
     default_config_file = open("/etc/apache2/sites-available/000-default.conf", "r")
@@ -130,9 +136,6 @@ else:
     os.system("chown www-data:www-data /var/www/phpmyadmin")
     os.system("mkdir /tmp/php")
     os.system("chown www-data:www-data /tmp/php")
-
-    # Clean up
-    os.system("rm mysql-apt-config_0.8.13-1_all.deb")
 
     # First boot done
     print("End of FIRST BOOT, the lamp server is ready.")
