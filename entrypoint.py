@@ -37,6 +37,50 @@ else:
     os.system("apt -y install php"+ php_v +"-json")
     os.system("apt -y install php"+ php_v +"-curl")
 
+    # Install Composer
+    if input("Do you want to install Composer ? Press \"y\" key to install composer.\n") == "y":
+        os.system("wget https://getcomposer.org/installer")
+        if os.path.exists("installer"):
+            os.replace("installer", "composer-setup.php")
+
+            # Download the installer checksum value
+            sha384sum = ""
+            checksum_error_message = "\033[0;31m ---ERROR --- \033[0m Composer installer checksum failed."
+            os.system("wget https://composer.github.io/installer.sha384sum")
+            if os.path.exists("installer.sha384sum"):
+
+                sha384sum_file = open("installer.sha384sum", "r")
+                sha384sum_file_content = sha384sum_file.read()
+                if len(sha384sum_file_content) > 0:
+                    sha384sum = sha384sum_file_content.split()[0]
+                else :
+                    print(checksum_error_message + " [1]")
+
+            else :
+                print(checksum_error_message + " [0]")
+
+            # Check if the installer file sum match with the checksum
+            if len(sha384sum) > 0:
+                php_cmd = "php -r \"if (hash_file('sha384', 'composer-setup.php') !== 'CHECKSUM') { unlink('composer-setup.php'); }\""
+                php_cmd = php_cmd.replace("CHECKSUM", sha384sum)
+                os.system(php_cmd)
+
+                if os.path.exists("composer-setup.php"):
+                    os.system("php composer-setup.php")
+                    os.remove("composer-setup.php")
+                else :
+                    print(checksum_error_message + " [2]")
+
+                os.remove("installer.sha384sum")
+
+                if os.path.exists("composer.phar"):
+                    os.replace("composer.phar", "/usr/local/bin/composer")
+                else :
+                    print("\033[0;31m ---ERROR --- \033[0m Composer installation failed.")
+
+        else:
+            print("\033[0;31m ---ERROR --- \033[0m Download https://getcomposer.org/installer failed")
+
     # Install MySQL
     os.system("wget https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb")
     os.system("mv mysql-apt-config_0.8.13-1_all.deb tmp/mysql-apt-config_0.8.13-1_all.deb")
