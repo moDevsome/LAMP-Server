@@ -1,27 +1,41 @@
 import os
 import sys
+import json
 
 if os.path.exists("etc/entrypoint/setup_done"):
     print("--- BOOTING ---")
     os.system("service apache2 start")
-    os.system("service mysql start")
 
     setup_done_file = open("etc/entrypoint/setup_done", "r")
-    site_name = setup_done_file.read()
+    params = json.loads(setup_done_file.read())
+    site_name = params["site-name"]
     setup_done_file.close()
-else:
-    print("--- FIRST BOOT ---"+ os.linesep + os.linesep)
 
-    php_versions = ["5.6","7.0","7.1","7.2","7.3","7.4","8.0"]
+    if params["has-mysql"] == "true":
+        os.system("service mysql start")
+else:
+    print("--- Welcome to the FIRST BOOT ! ---"+ os.linesep + os.linesep)
+    print("Debian release : "+ os.linesep + os.linesep)
+    os.system("lsb_release -a")
+
+    params = {}
 
     # Setting the site name
     site_name = input("What's the domain name of your website ? (without the extension)"+ os.linesep)
+    params["site-name"] = site_name
 
     # Setting the PHP Version
+    php_versions = ["5.6","7.0","7.1","7.2","7.3","7.4","8.0","8.2"]
     php_versions_strlist = " ".join(php_versions)
     php_v = ""
     while php_v not in php_versions:
         php_v = input(os.linesep +"Which version of PHP do you want to use ? Available versions : "+ php_versions_strlist + os.linesep)
+
+    # Prepare PHP installation
+    os.system("wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg")
+    os.system('echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list')
+    os.system("apt update")
+    os.system("apt upgrade -y")
 
     # Install PHP
     os.system("apt -y install php"+ php_v)
@@ -114,6 +128,11 @@ else:
         os.system("rm /tmp/phpMyAdmin-5.1.1-all-languages.tar.gz")
         os.system("rmdir /tmp/phpMyAdmin-5.1.1-all-languages")
 
+        # Set params dictionnary
+        params["has-mysql"] = "true"
+    else:
+        params["has-mysql"] = "false"
+
     # Setting HTTP Conf
     default_config_file = open("/etc/apache2/sites-available/000-default.conf", "r")
     defaut_config_content = default_config_file.read()
@@ -140,10 +159,13 @@ else:
     # First boot done
     print("End of FIRST BOOT, the lamp server is ready.")
     setup_done_file = open("etc/entrypoint/setup_done", "w")
-    setup_done_file.write(site_name)
+    setup_done_file.write(json.dumps(params))
     setup_done_file.close()
     os.system("service apache2 start")
 
 print("Your website should be accessible at the following adress : "+ site_name +".local")
-print("PHPMyAdmin should be accessible at the following adress : phpmyadmin.local")
+
+if params["has-mysql"] == "true":
+    print("PHPMyAdmin should be accessible at the following adress : phpmyadmin.local")
+
 os.system("bash")

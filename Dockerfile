@@ -9,6 +9,7 @@ RUN apt -y install apt-transport-https
 RUN apt -y install ca-certificates
 RUN apt -y install wget
 RUN apt -y install gnupg
+RUN apt -y install vim
 RUN apt update
 RUN apt upgrade -y
 
@@ -21,12 +22,6 @@ RUN a2enmod rewrite
 RUN a2enmod deflate
 RUN a2enmod headers
 RUN service apache2 restart
-
-# Prepare PHP installation
-RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
-RUN echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
-RUN apt update
-RUN apt upgrade -y
 
 RUN apt update
 RUN apt full-upgrade -y
